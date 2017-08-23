@@ -19,7 +19,8 @@ MSGS = {
     'output_success': 'SUCCESS. You worked for:'
 }
 
-lunch_time = datetime.timedelta(0, 5400) # Lunch = 1:30h (5400seg)
+LUNCH_TIME = datetime.timedelta(0, 5400) # Lunch = 1:30h (5400seg)
+WORKING_HOURS = '8'
 
 def hours_of_work():
     arrival_time, departure_time = assign_inputs()
@@ -57,7 +58,7 @@ def string_to_datetime(time_string):
     return datetime_obj
 
 def calculate_office_hour(arrival_time, departure_time):
-    work_seconds = (departure_time - arrival_time) - lunch_time
+    work_seconds = (departure_time - arrival_time) - LUNCH_TIME
     return str(work_seconds)[0:4] + 'h'
 
 def log_msg(color, msg, value=''):
@@ -65,7 +66,7 @@ def log_msg(color, msg, value=''):
     sys.stdout.write(text)
 
 def office_hour_is_valid(office_hour):
-    return office_hour[0] >= '6'
+    return office_hour[0] >= WORKING_HOURS
 
 if __name__ == '__main__':
     hours_of_work()
