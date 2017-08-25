@@ -40,11 +40,11 @@ def hours_of_work():
 
 def assign_inputs():
     log_msg(COLORS['COMMON'], MSGS['input_arrival_time'])
-    arrival_time = raw_input()
+    arrival_time = input()
     print('---------------------------------------------------')
 
     log_msg(COLORS['COMMON'], MSGS['input_departure_time'])
-    departure_time = raw_input()
+    departure_time = input()
     print('---------------------------------------------------')
 
     return arrival_time, departure_time
