@@ -17,3 +17,6 @@ python hours_work.py
 You just have to input two data:
 - arrival time
 - departure time
+
+### Important
+Make sure you're using Python 3 to run the script
