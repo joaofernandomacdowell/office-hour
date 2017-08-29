@@ -32,7 +32,7 @@ def get_hours_of_work():
         departure_time = _string_to_datetime(departure_time)
 
         office_hour_td = _calculate_office_hour_td(arrival_time, departure_time)
-        hour_and_minute_tuple = _timedelta_to_tuple(office_hour_td)
+        hour_and_minute_tuple = _timedelta_to_hour_minute_tuple(office_hour_td)
         output = _convert_tuple_to_formatted_string(hour_and_minute_tuple)
 
         if _office_hour_is_completed(hour_and_minute_tuple):
@@ -69,7 +69,7 @@ def _log_msg(color, msg, value=''):
     text = '{} {} {} {}\n'.format(color, msg, value, COLORS['CLOSE_TAG'])
     sys.stdout.write(text)
 
-def _timedelta_to_tuple(office_hour_timedelta):
+def _timedelta_to_hour_minute_tuple(office_hour_timedelta):
     hours = office_hour_timedelta.seconds // 3600
     minutes = (office_hour_timedelta.seconds // 60) % 60
 
