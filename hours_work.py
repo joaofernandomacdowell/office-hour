@@ -20,55 +20,76 @@ MSGS = {
     'output_success': 'SUCCESS. You worked for:'
 }
 
+FMT = '%H:%M'
 LUNCH_TIME = datetime.timedelta(0, 5400) # Lunch = 1:30h (5400seg)
-WORKING_HOURS = '8'
+WORKING_HOURS = 8
 
 def hours_of_work():
-    arrival_time, departure_time = assign_inputs()
+    arrival_time, departure_time = _assign_inputs()
 
     if arrival_time and departure_time:
-        arrival_time = string_to_datetime(arrival_time)
-        departure_time = string_to_datetime(departure_time)
+        arrival_time = _string_to_datetime(arrival_time)
+        departure_time = _string_to_datetime(departure_time)
 
-        office_hour = calculate_office_hour(arrival_time, departure_time)
-        import ipdb; ipdb.set_trace()
+        office_hour_td = _calculate_office_hour_td(arrival_time, departure_time)
+        hour_and_minute_tuple = _timedelta_to_tuple(office_hour_td)
+        output = _convert_tuple_to_formatted_string(hour_and_minute_tuple)
 
-        if office_hour_is_valid(office_hour):
-            log_msg(COLORS['SUCCESS'], MSGS['output_success'], office_hour)
+        if _office_hour_is_completed(hour_and_minute_tuple):
+            _log_msg(COLORS['SUCCESS'], MSGS['output_success'], output)
         else:
-            log_msg(COLORS['WARNING'], MSGS['output_warning'], office_hour)
+            _log_msg(COLORS['WARNING'], MSGS['output_warning'], output)
     else:
-        log_msg(COLORS['FAIL'], MSGS['insufficient_data'])
+        _log_msg(COLORS['FAIL'], MSGS['insufficient_data'])
 
-def assign_inputs():
-    log_msg(COLORS['COMMON'], MSGS['input_arrival_time'])
+def _assign_inputs():
+    _log_msg(COLORS['COMMON'], MSGS['input_arrival_time'])
     arrival_time = input()
     print('---------------------------------------------------')
 
-    log_msg(COLORS['COMMON'], MSGS['input_departure_time'])
+    _log_msg(COLORS['COMMON'], MSGS['input_departure_time'])
     departure_time = input()
     print('---------------------------------------------------')
 
     return arrival_time, departure_time
 
-def string_to_datetime(time_string):
+def _string_to_datetime(time_string):
     try:
-        datetime_obj = datetime.datetime.strptime(time_string, '%H:%M')
+        datetime_obj = datetime.datetime.strptime(time_string, FMT)
     except ValueError:
-        log_msg(COLORS['FAIL'], MSGS['output_fail'])
+        _log_msg(COLORS['FAIL'], MSGS['output_fail'])
+        sys.exit(1)
 
     return datetime_obj
 
-def calculate_office_hour(arrival_time, departure_time):
-    work_seconds = (departure_time - arrival_time) - LUNCH_TIME
-    return str(work_seconds)[0:4] + 'h'
+def _calculate_office_hour_td(arrival_time, departure_time):
+    return (departure_time - arrival_time) - LUNCH_TIME
 
-def log_msg(color, msg, value=''):
+def _log_msg(color, msg, value=''):
     text = '{} {} {} {}\n'.format(color, msg, value, COLORS['CLOSE_TAG'])
     sys.stdout.write(text)
 
-def office_hour_is_valid(office_hour):
-    return office_hour[0] >= WORKING_HOURS
+def _timedelta_to_tuple(office_hour_timedelta):
+    hours = office_hour_timedelta.seconds // 3600
+    minutes = (office_hour_timedelta.seconds // 60) % 60
+
+    return hours, minutes
+
+def _office_hour_is_completed(office_hour_tuple):
+    return office_hour_tuple[0] >= WORKING_HOURS
+
+def _tuple_to_string(office_hour_tuple):
+    hour_str = str(office_hour_tuple[0])
+    minute_str = str(office_hour_tuple[1])
+
+    return '{}:{}'.format(hour_str, minute_str)
+
+def _convert_tuple_to_formatted_string(hour_and_minute_tuple):
+    office_hour_str = _tuple_to_string(hour_and_minute_tuple)
+    datetime_obj = _string_to_datetime(office_hour_str)
+    hour_minute = datetime_obj.strftime(FMT)
+
+    return '{}h'.format(hour_minute)
 
 if __name__ == '__main__':
     hours_of_work()
