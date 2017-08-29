@@ -31,6 +31,7 @@ def hours_of_work():
         departure_time = string_to_datetime(departure_time)
 
         office_hour = calculate_office_hour(arrival_time, departure_time)
+        import ipdb; ipdb.set_trace()
 
         if office_hour_is_valid(office_hour):
             log_msg(COLORS['SUCCESS'], MSGS['output_success'], office_hour)
@@ -63,7 +64,7 @@ def calculate_office_hour(arrival_time, departure_time):
     return str(work_seconds)[0:4] + 'h'
 
 def log_msg(color, msg, value=''):
-    text = '{} {} {} {}\n'.format(color, msg, value, COLOR['CLOSE_TAG'])
+    text = '{} {} {} {}\n'.format(color, msg, value, COLORS['CLOSE_TAG'])
     sys.stdout.write(text)
 
 def office_hour_is_valid(office_hour):
