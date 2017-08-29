@@ -24,7 +24,7 @@ FMT = '%H:%M'
 LUNCH_TIME = datetime.timedelta(0, 5400) # Lunch = 1:30h (5400seg)
 WORKING_HOURS = 8
 
-def hours_of_work():
+def get_hours_of_work():
     arrival_time, departure_time = _assign_inputs()
 
     if arrival_time and departure_time:
@@ -87,9 +87,9 @@ def _tuple_to_string(office_hour_tuple):
 def _convert_tuple_to_formatted_string(hour_and_minute_tuple):
     office_hour_str = _tuple_to_string(hour_and_minute_tuple)
     datetime_obj = _string_to_datetime(office_hour_str)
-    hour_minute = datetime_obj.strftime(FMT)
+    formatted_output = datetime_obj.strftime(FMT)
 
-    return '{}h'.format(hour_minute)
+    return '{}h'.format(formatted_output)
 
 if __name__ == '__main__':
-    hours_of_work()
+    get_hours_of_work()
