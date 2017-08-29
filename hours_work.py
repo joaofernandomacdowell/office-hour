@@ -7,7 +7,8 @@ COLORS = {
     'COMMON': '\x1b[0;37;40m',
     'FAIL': '\x1b[1;31;40m',
     'WARNING': '\x1b[6;30;43m',
-    'SUCCESS': '\x1b[5;30;42m'
+    'SUCCESS': '\x1b[5;30;42m',
+    'CLOSE_TAG': '\x1b[0m'
 }
 
 MSGS = {
@@ -53,7 +54,7 @@ def string_to_datetime(time_string):
     try:
         datetime_obj = datetime.datetime.strptime(time_string, '%H:%M')
     except ValueError:
-        raise ValueError(COLORS['FAIL'] + MSGS['output_fail'])
+        log_msg(COLORS['FAIL'], MSGS['output_fail'])
 
     return datetime_obj
 
@@ -62,7 +63,7 @@ def calculate_office_hour(arrival_time, departure_time):
     return str(work_seconds)[0:4] + 'h'
 
 def log_msg(color, msg, value=''):
-    text = '{} {} {} {}\n'.format(color, msg, value, '\x1b[0m')
+    text = '{} {} {} {}\n'.format(color, msg, value, COLOR['CLOSE_TAG'])
     sys.stdout.write(text)
 
 def office_hour_is_valid(office_hour):
