@@ -16,6 +16,8 @@ MSGS = {
     'input_departure_time': 'Enter with your departure time. (Ex: 18:30)',
     'insufficient_data': 'ERROR. Specify your arrival time and departure time.',
     'output_fail': 'Incorrect data format, should be HH:MM. Ex: 09:30',
+    'input_error': 'ERROR. Departure time must be greater than arrival time',
+    'invalid_working_hours': 'ERROR. You worked for less than 1 minute',
     'output_warning': 'WARNING. Your worked for only:',
     'output_success': 'SUCCESS. You worked for:'
 }
@@ -31,14 +33,21 @@ def get_hours_of_work():
         arrival_time = _string_to_datetime(arrival_time)
         departure_time = _string_to_datetime(departure_time)
 
-        office_hour_td = _calculate_office_hour_td(arrival_time, departure_time)
-        hour_and_minute_tuple = _timedelta_to_hour_minute_tuple(office_hour_td)
-        output = _convert_tuple_to_formatted_string(hour_and_minute_tuple)
+        if _arrival_and_departure_are_valid(arrival_time.hour, departure_time.hour):
+            office_hour_td = _calculate_office_hour_td(arrival_time, departure_time)
 
-        if _office_hour_is_completed(hour_and_minute_tuple):
-            _log_msg(COLORS['SUCCESS'], MSGS['output_success'], output)
+            if _office_hour_is_valid(office_hour_td):
+                hour_and_minute_tuple = _timedelta_to_hour_minute_tuple(office_hour_td)
+                output = _convert_tuple_to_formatted_string(hour_and_minute_tuple)
+
+                if _office_hour_is_completed(hour_and_minute_tuple):
+                    _log_msg(COLORS['SUCCESS'], MSGS['output_success'], output)
+                else:
+                    _log_msg(COLORS['WARNING'], MSGS['output_warning'], output)
+            else:
+                _log_msg(COLORS['FAIL'], MSGS['invalid_working_hours'])
         else:
-            _log_msg(COLORS['WARNING'], MSGS['output_warning'], output)
+            _log_msg(COLORS['FAIL'], MSGS['input_error'])
     else:
         _log_msg(COLORS['FAIL'], MSGS['insufficient_data'])
 
@@ -90,6 +99,12 @@ def _convert_tuple_to_formatted_string(hour_and_minute_tuple):
     formatted_output = datetime_obj.strftime(FMT)
 
     return '{}h'.format(formatted_output)
+
+def _arrival_and_departure_are_valid(arrival_hour, departure_hour):
+    return True if arrival_hour < departure_hour else False
+
+def _office_hour_is_valid(office_hour_timedelta):
+    return True if office_hour_timedelta.days != -1 else False
 
 if __name__ == '__main__':
     get_hours_of_work()
