@@ -55,7 +55,7 @@ def get_hours_of_work():
         _log_msg(COLORS['FAIL'], MSGS['insufficient_data'])
 
 def _arrival_time_after_lunch(arrival_time):
-    if arrival_time == '13:00' or arrival_time == '13:30':
+    if arrival_time.hour >= 13:
         return True
 
     return False
@@ -81,7 +81,7 @@ def _string_to_datetime(time_string):
     return datetime_obj
 
 def _calculate_office_hour_td(arrival_time, departure_time):
-    if _arrival_time_after_lunch:
+    if _arrival_time_after_lunch(arrival_time):
         return departure_time - arrival_time
     else:
         return (departure_time - arrival_time) - LUNCH_TIME
