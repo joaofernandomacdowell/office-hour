@@ -29,13 +29,16 @@ WORKING_HOURS = 8
 def get_hours_of_work():
     arrival_time, departure_time = _assign_inputs()
 
+    # Check if arrival_time and departure_time is not empty
     if arrival_time and departure_time:
         arrival_time = _string_to_datetime(arrival_time)
         departure_time = _string_to_datetime(departure_time)
 
+        # Check if arrival_time and departure_time are valid
         if _arrival_and_departure_are_valid(arrival_time.hour, departure_time.hour):
             office_hour_td = _calculate_office_hour_td(arrival_time, departure_time)
 
+            # Check if office_hour is valid
             if _office_hour_is_valid(office_hour_td):
                 hour_and_minute_tuple = _timedelta_to_hour_minute_tuple(office_hour_td)
                 output = _convert_tuple_to_formatted_string(hour_and_minute_tuple)
@@ -50,6 +53,12 @@ def get_hours_of_work():
             _log_msg(COLORS['FAIL'], MSGS['input_error'])
     else:
         _log_msg(COLORS['FAIL'], MSGS['insufficient_data'])
+
+def _arrival_time_after_lunch(arrival_time):
+    if arrival_time == '13:00' or arrival_time == '13:30':
+        return True
+
+    return False
 
 def _assign_inputs():
     _log_msg(COLORS['COMMON'], MSGS['input_arrival_time'])
@@ -72,7 +81,10 @@ def _string_to_datetime(time_string):
     return datetime_obj
 
 def _calculate_office_hour_td(arrival_time, departure_time):
-    return (departure_time - arrival_time) - LUNCH_TIME
+    if _arrival_time_after_lunch:
+        return departure_time - arrival_time
+    else:
+        return (departure_time - arrival_time) - LUNCH_TIME
 
 def _log_msg(color, msg, value=''):
     text = '{} {} {} {}\n'.format(color, msg, value, COLORS['CLOSE_TAG'])
